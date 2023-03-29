@@ -81,11 +81,11 @@ const ReplyComment = ({
   username,
   replyingTo
 }) => {
-  const [toggle, setToggle] = useState(false);
+  // const [toggle, setToggle] = useState(false);
 
-  const handleToggle = () => {
-    setToggle(prev => !prev);
-  };
+  // const handleToggle = () => {
+  //   setToggle(prev => !prev);
+  // };
   return (
     <>
       <Comment>
@@ -108,12 +108,13 @@ const ReplyComment = ({
           </MainInfo_Content>
         </MainInfo>
 
-        <Reply onClick={handleToggle}>
+        {/* onClick={handleToggle} */}
+        <Reply >
           <img src={reply} alt="reply" />
           <h4>Reply</h4>
         </Reply>
       </Comment>
-      {toggle ? <AnswerComment onReply={username} /> : undefined}
+      {/* {toggle ? <AnswerComment onReply={username} /> : undefined} */}
     </>
   );
 };

@@ -5,7 +5,7 @@ import avatar from '../images/avatars/image-juliusomo.webp';
 
 import { useDispatch } from 'react-redux';
 
-import { fetchMainUser,addNewComment } from '../store/commentSlice';
+import { fetchMainUser, addNewComment } from '../store/commentSlice';
 
 const AnswerWrapper = styled.div`
   display: flex;
@@ -18,8 +18,8 @@ const AnswerWrapper = styled.div`
   padding: 30px;
   border-radius: var(--radius);
   box-shadow: 12px 12px 8px 0px rgba(34, 60, 80, 0.2);
-  margin-left: 200px;
-  max-width: 600px;
+  margin-left: 50px;
+  width: 750px;
 `;
 const AnwerInput = styled.input`
   padding: 30px;
@@ -39,7 +39,6 @@ const Button = styled.button`
 const AnswerComment = ({onReply}) => {
   const [answer, setAnswer] = useState('');
   const dispatch = useDispatch();
-  console.log('to reply ', onReply)
 
   const addComment = () => {
     dispatch(addNewComment(answer))
@@ -55,7 +54,7 @@ const AnswerComment = ({onReply}) => {
       <img width={50} src={avatar} alt="avatar" />
       <AnwerInput
         type="text"
-        value={`@${onReply} ${answer}`}
+        value={answer}
         onChange={e => setAnswer(e.target.value)}
       />
       <Button onClick={addComment}>Reply</Button>

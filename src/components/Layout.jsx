@@ -25,7 +25,7 @@ const Layout = () => {
   const dispatch = useDispatch();
 
   const { error, status } = useSelector(state => state.comments);
-
+console.log('comms', comments)
   useEffect(() => {
     dispatch(fetchComments());
   }, [dispatch]);
@@ -34,6 +34,7 @@ const Layout = () => {
     <Wrapper>
       {comments.map(comment => (
         <CommomComment
+          id={comment.id}
           key={comment.id}
           createdAt={comment.createdAt}
           username={comment.user.username}
@@ -61,6 +62,7 @@ const Layout = () => {
           )}
         </CommomComment>
       ))}
+      <AnswerComment/>
     </Wrapper>
   );
 };
