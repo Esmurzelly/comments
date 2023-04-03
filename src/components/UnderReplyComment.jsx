@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
-import { useDispatch } from 'react-redux';
-// import { changeContent } from '../store/commentSlice';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { patchComment } from '../store/commentSlice';
 
 const UnderReplyComment = ({id}) => {
     const [testText, setTestsText] = useState('');
     const dispatch = useDispatch();
-
   return (
     <>
       <input
@@ -15,9 +15,7 @@ const UnderReplyComment = ({id}) => {
         width={200}
       />
       <button
-        // onClick={() => {
-        //   dispatch(changeContent(id));
-        // }}
+        onClick={() => dispatch(patchComment(id))}
       >
         Apply
       </button>

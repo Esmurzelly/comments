@@ -6,6 +6,8 @@ import minus from '../images/icon-minus.svg';
 import plus from '../images/icon-plus.svg';
 import reply from '../images/icon-reply.svg';
 
+import { useSelector } from 'react-redux';
+
 const Comment = styled.div`
   background-color: #fff;
   display: flex;
@@ -77,7 +79,6 @@ const ReplyComment = ({
   content,
   createdAt,
   score,
-  image,
   username,
   replyingTo
 }) => {
@@ -86,6 +87,13 @@ const ReplyComment = ({
   // const handleToggle = () => {
   //   setToggle(prev => !prev);
   // };
+  const avatars = useSelector(state => state.images.image);
+
+  let currAvatar = (username == 'amyrobson') ? avatars[3].avatar :
+  (username == 'maxblagun') ? avatars[2].avatar :
+  (username == 'ramsesmiron') ? avatars[0].avatar :
+  avatars[1].avatar;
+  
   return (
     <>
       <Comment>
@@ -97,7 +105,7 @@ const ReplyComment = ({
 
         <MainInfo>
           <MainInfo_top>
-            <img src={image} alt="image" />
+            <img src={currAvatar} alt="image" />
             <p>{username}</p>
             <p>{createdAt}</p>
           </MainInfo_top>

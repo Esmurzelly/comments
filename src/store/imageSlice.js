@@ -5,8 +5,6 @@ import image_juli from '../images/avatars/image-juliusomo.webp';
 import image_max from '../images/avatars/image-maxblagun.webp';
 import image_ramses from '../images/avatars/image-ramsesmiron.webp';
 
-
-
 const imageSlice = createSlice({
     name: 'images',
     initialState: {
@@ -19,7 +17,7 @@ const imageSlice = createSlice({
             {
                 id: 2,
                 name: 'juli',
-                avatar: image_juli
+                avatar: image_juli  
             },
             {
                 id: 3,

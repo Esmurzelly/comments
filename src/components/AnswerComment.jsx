@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import avatar from '../images/avatars/image-juliusomo.webp';
 
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { fetchMainUser, addNewComment } from '../store/commentSlice';
 
@@ -38,6 +38,9 @@ const Button = styled.button`
 
 const AnswerComment = ({onReply}) => {
   const [answer, setAnswer] = useState('');
+
+  const avatarTest = useSelector(state => state.images.image);
+console.log('testtt ', avatarTest[1].avatar)
   const dispatch = useDispatch();
 
   const addComment = () => {

@@ -1,8 +1,19 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import {
+  createSlice,
+  createAsyncThunk,
+  createEntityAdapter,
+} from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
+import sub from 'date-fns/sub';
+import { subMinutes, formatDistance, formatDistanceToNow } from 'date-fns';
 
 const baseURL_comments = 'http://localhost:3500/comments';
 const baseURL_user = 'http://localhost:3500/currentUser';
+
+// const postAdapter = createEntityAdapter({
+//   sortComparer: (a, b) => b.date.localeCompare(a.date),
+// });
+// const initialState = postAdapter.getInitialState();
 
 export const fetchComments = createAsyncThunk(
   'comments/fetchComments',
@@ -40,15 +51,21 @@ export const fetchMainUser = createAsyncThunk(
 export const addNewComment = createAsyncThunk(
   'comments/addComment',
   async function (text, { rejectWithValue, dispatch }) {
+    let min = 1;
+    let currentDate = new Date();
     try {
       const comment = {
         id: uuidv4(),
         content: text,
-        createdAt: 'few seconds ago',
+        createdAt: formatDistanceToNow(currentDate, currentDate),
+        // createdAt: sub(new Date(), { minutes: min++ }).toISOString(),
         replies: [],
         score: 0,
         user: {
-          image: '../images/avatars/image-juliusomo.webp',
+          image: {
+            png: '../images/avatars/image-juliusomo.png',
+            webp: '../images/avatars/image-juliusomo.webp',
+          },
           username: 'juliusomo',
         },
       };
@@ -91,37 +108,98 @@ export const removeNewComment = createAsyncThunk(
   }
 );
 
-// export const changeContent = createAsyncThunk(
-//   'comments/changeContent',
-//   async function (id, { rejectWithValue, dispatch, getState }) {
-//     const currentComment = getState().comments.comment.find(
-//       com => com.id === id
-//     );
-//     try {
-//       const response = await fetch(`${baseURL_comments}/${id}`, {
-//         method: 'PATCH',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({
-//           content: currentComment.changeText,
-//         }),
-//       });      
+export const increaseScore = createAsyncThunk(
+  'comments/increaseScore',
+  async function(id, {rejectWithValue, dispatch, getState}) {
+    const comment = getState().comments.comment.find(com => com.id === id);
+  
+    try {
+      const response = await fetch(
+        `${baseURL_comments}/${id}`,
+        {
+          method: "PATCH",
+          headers: {
+            'Content-Type': 'application/json',
 
-//       if (!response.ok) {
-//         throw new Error("Can't change comment. Server Error!");
-//       }
+          },
+          body: JSON.stringify({
+            score: comment.score + 1
+          }),
+        }
+      );
 
-//       dispatch(changeCurrentContent({id}))
-//       console.log(currentComment)
+      if (!response.ok) {
+        throw new Error("Can't delete status. Server Error!");
+      }
 
+      dispatch(increaseNewScore({id}));
+    } catch(e) {
+      return rejectWithValue(e.message)
+    }
+  }
+);
 
-//     } catch (e) {
-//       return rejectWithValue(e.message);
-//     }
-//   }
-// );
+export const decreaseScore = createAsyncThunk(
+  'comments/increaseScore',
+  async function(id, {rejectWithValue, dispatch, getState}) {
+    const comment = getState().comments.comment.find(com => com.id === id);
+  
+    try {
+      const response = await fetch(
+        `${baseURL_comments}/${id}`,
+        {
+          method: "PATCH",
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            score: comment.score - 1
+          }),
+        }
+      );
 
+      if (!response.ok) {
+        throw new Error("Can't delete status. Server Error!");
+      }
+
+      dispatch(decreaseNewScore({id}));
+    } catch(e) {
+      return rejectWithValue(e.message)
+    }
+  }
+);
+
+export const patchComment = createAsyncThunk(
+  'comments/patchComment',
+  async function(id, {rejectWithValue, dispatch, getState}) {
+    const comment = getState().comments.comment.find(com => com.id === id);
+
+    try {
+      const response = await fetch(
+        `${baseURL_comments}/${id}`,
+          {
+            method: "PATCH",
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              content: comment.content
+            })
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Can't delete status. Server Error!");
+        }
+
+        dispatch(patchNewComment({id}))
+
+    } catch (e) {
+      return rejectWithValue(e.message)
+    }
+
+  }
+);
 
 const commentSlice = createSlice({
   name: 'comment',
@@ -137,11 +215,23 @@ const commentSlice = createSlice({
     removeComment(state, action) {
       state.comment = state.comment.filter(com => com.id !== action.payload.id);
     },
-    changeCurrentContent(state, action, text) {
-        const changedCom = state.comment.find(
-            com => com.id === action.payload.id
-        );
-        changedCom.content = action.payload;
+    increaseNewScore(state, action) {
+      const patchedScoreCommment = state.action.find(
+        com => com.id === action.payload.id
+      );
+      patchedScoreCommment.score += 1; 
+    },
+    decreaseNewScore(state, action) {
+      const patchedScoreCommment = state.action.find(
+        com => com.id === action.payload.id
+      );
+      patchedScoreCommment.score -= 1; 
+    },
+    patchNewComment(state, action) {
+      const patchedContentCommment = state.action.find(
+        com => com.id === action.payload.id
+      );
+      patchedContentCommment.content = "test async await"
     }
   },
   extraReducers: {
@@ -157,8 +247,21 @@ const commentSlice = createSlice({
       state.status = 'rejected...';
       state.error = action.payload;
     },
+
+    // [patchComment.pending]: (state) => {
+    //   state.status = 'loading...';
+
+    // },
+    // [patchComment.fulfilled]: (state, { payload }) => {
+    //   (state.status = 'resolved');
+    //     commentAdapter.updateOne(state, {
+    //       id: payload.id,
+    //       changes: payload.changes,
+    //     });
+    // },
   },
 });
 
-const { addComment, removeComment, changeCurrentContent } = commentSlice.actions;
+const { addComment, removeComment, increaseNewScore, decreaseNewScore, patchNewComment } =
+  commentSlice.actions;
 export default commentSlice.reducer;

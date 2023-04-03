@@ -1,7 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import styled from 'styled-components';
 
-import { removeNewComment, changeContent } from '../store/commentSlice';
+import {
+  removeNewComment,
+  increaseScore,
+  decreaseScore,
+} from '../store/commentSlice';
+
 
 import { useSelector, useDispatch } from 'react-redux';
 
@@ -93,18 +98,23 @@ const CommomComment = ({
   content,
   createdAt,
   score,
-  image,
   username,
   children,
 }) => {
   const comments = useSelector(state => state.comments.comment);
+  const avatars = useSelector(state => state.images.image);
+
   const dispatch = useDispatch();
-  // const [repl, setRepl] = useState([])
+
+  // const onPatch = useCallback(
+  //   (id, newObj) => dispatch(patchComment({id, newObj})),
+  //   []
+  // );
 
   const [toggle, setToggle] = useState(false);
 
   const handleToggle = () => {
-    setToggle(prev => !prev);
+    setToggle(toggle => !toggle);
   };
 
   function filterArr(id, arr) {
@@ -124,18 +134,27 @@ const CommomComment = ({
     // };
   }
 
+  let currAvatar =
+    username == 'amyrobson'
+      ? avatars[3].avatar
+      : username == 'maxblagun'
+      ? avatars[2].avatar
+      : username == 'ramsesmiron'
+      ? avatars[0].avatar
+      : avatars[1].avatar;
+
   return (
     <>
       <Comment>
         <Score>
-          <img src={plus} alt="plus" />
+          <img onClick={() => dispatch(increaseScore(id))} src={plus} alt="plus" />
           <p>{score}</p>
-          <img src={minus} alt="minus" />
+          <img onClick={() => dispatch(decreaseScore(id))} src={minus} alt="minus" />
         </Score>
 
         <MainInfo>
           <MainInfo_top>
-            <img src={image} alt="image" />
+            <img src={currAvatar} alt="image" />{' '}
             <p>{username}</p>
             <p>{createdAt}</p>
           </MainInfo_top>
@@ -155,26 +174,20 @@ const CommomComment = ({
               <h4>Delete</h4>
             </Reply>
 
-            <Reply
-              color="var(--color-blue)"
-              onClick={() => handleToggle()}
-              // onClick={() => changeContent(id)}
-            >
+            <Reply color="var(--color-blue)" onClick={() => handleToggle()}>
               <img src={edit_icon} alt="edit" />
               <h4>Edit</h4>
             </Reply>
 
-            {toggle ? (
-              <UnderReplyComment id={id}/>
-            ) : undefined}
-
+            {/* {toggle ? <UnderReplyComment onPatch={onPatch} id={id} /> : undefined} */}
+            {toggle ? <UnderReplyComment id={id} /> : undefined}
           </>
         ) : (
           <Reply
             color="var(--color-dark-blue)"
-            onClick={() => {
-              filterArr(id, comments);
-            }}
+            // onClick={() => {
+            //   filterArr(id, comments);
+            // }}
           >
             <img src={reply} alt="reply" />
             <h4>Reply</h4>
@@ -187,4 +200,4 @@ const CommomComment = ({
   );
 };
 
-export default CommomComment;
+export default memo(CommomComment);

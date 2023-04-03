@@ -3,14 +3,13 @@ import Layout from './components/Layout';
 import styled from 'styled-components';
 
 // come to russian tutorial
-// identify by id of post
-// make a example post
-// build common answer comment (like footer) 
 
 const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
   width: 100%;
   background-color: #e8e6e6;
-  height: 100%;
+  min-height: 100vh;
   padding: 50px;
 `;
 
