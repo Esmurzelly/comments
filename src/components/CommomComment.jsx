@@ -5,6 +5,7 @@ import {
   removeNewComment,
   increaseScore,
   decreaseScore,
+  patchComment,
 } from '../store/commentSlice';
 
 
