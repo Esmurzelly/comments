@@ -43,5 +43,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "main": "server.js",
+  "repository": "https://github.com/Esmurzelly/comments.git",
+  "author": "Esmurzelly <78688219+Esmurzelly@users.noreply.github.com>",
+  "license": "MIT"
 }
